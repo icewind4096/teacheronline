@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.windvalley.guli.common.base.result.R;
 import com.windvalley.guli.service.edu.entity.Teacher;
 import com.windvalley.guli.service.edu.service.ITeacherService;
+import com.windvalley.guli.service.edu.vo.TeacherQueryVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -49,11 +50,12 @@ public class TeacherController {
 
     @ApiOperation("讲师分页列表")
     @PostMapping("list/{current}/{size}")
-    public R listPage(@ApiParam("当前页码") @PathVariable Long current
-                     ,@ApiParam("每页记录数") @PathVariable Long size) {
+    public R listPage(@ApiParam(value = "当前页码", required = true) @PathVariable Long current
+                     , @ApiParam(value = "每页记录数", required = true) @PathVariable Long size
+                     , @ApiParam("查询条件对象") TeacherQueryVO teacherQueryVO) {
         Page<Teacher> pagePara = new Page<>(current, size);
 
-        IPage<Teacher> pageModel = teacherService.page(pagePara);
+        IPage<Teacher> pageModel = teacherService.selectPage(pagePara, teacherQueryVO);
 
         List<Teacher> teachers = pageModel.getRecords();
 
