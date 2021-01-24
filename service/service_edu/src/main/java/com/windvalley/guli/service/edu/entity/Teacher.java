@@ -30,7 +30,7 @@ public class Teacher extends BaseEntity {
 
     private static final long serialVersionUID=1L;
 
-    @ApiModelProperty(value = "讲师姓名")
+    @ApiModelProperty(value = "讲师姓名", example = "邹老师")
     private String name;
 
     @ApiModelProperty(value = "讲师简介")
@@ -48,7 +48,7 @@ public class Teacher extends BaseEntity {
     @ApiModelProperty(value = "排序")
     private Integer sort;
 
-    @ApiModelProperty(value = "入驻时间")
+    @ApiModelProperty(value = "入驻时间", example = "2021/04/02")
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date joinDate;
 
