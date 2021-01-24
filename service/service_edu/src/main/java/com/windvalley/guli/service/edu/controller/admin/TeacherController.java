@@ -1,6 +1,8 @@
 package com.windvalley.guli.service.edu.controller.admin;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.windvalley.guli.common.base.result.R;
 import com.windvalley.guli.service.edu.entity.Teacher;
 import com.windvalley.guli.service.edu.service.ITeacherService;
@@ -43,6 +45,21 @@ public class TeacherController {
         } else {
             return R.error().message("数据不存在");
         }
+    }
+
+    @ApiOperation("讲师分页列表")
+    @PostMapping("list/{current}/{size}")
+    public R listPage(@ApiParam("当前页码") @PathVariable Long current
+                     ,@ApiParam("每页记录数") @PathVariable Long size) {
+        Page<Teacher> pagePara = new Page<>(current, size);
+
+        IPage<Teacher> pageModel = teacherService.page(pagePara);
+
+        List<Teacher> teachers = pageModel.getRecords();
+
+        Long total = pageModel.getTotal();
+
+        return R.ok().data("total", total).data("rows", teachers);
     }
 }
 
