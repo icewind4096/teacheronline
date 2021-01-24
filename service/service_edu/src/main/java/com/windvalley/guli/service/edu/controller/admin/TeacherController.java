@@ -63,5 +63,34 @@ public class TeacherController {
 
         return R.ok().data("total", total).data("rows", teachers);
     }
+
+    @ApiOperation("保存讲师数据")
+    @PostMapping("save")
+    public R save(@ApiParam(value = "讲师对象", required = true) @RequestBody Teacher teacher) {
+        teacherService.save(teacher);
+        return R.ok().message("保存讲师数据成功");
+    }
+
+    @ApiOperation("修改讲师数据")
+    @PostMapping("update")
+    public R updateById(@ApiParam(value = "讲师对象", required = true) @RequestBody Teacher teacher) {
+        boolean result = teacherService.updateById(teacher);
+        if (result){
+            return R.ok().message("修改讲师数据成功");
+        } else {
+            return R.error().message("修改讲师数据失败");
+        }
+    }
+
+    @ApiOperation("根据讲师ID,获得讲师数据")
+    @PostMapping("get/{id}")
+    public R delete(@ApiParam(value = "讲师ID", required = true) @PathVariable String id) {
+        Teacher teacher = teacherService.getById(id);
+        if (teacher != null){
+            return R.ok().data("item", teacher);
+        } else {
+            return R.error().message("数据不存在");
+        }
+    }
 }
 
