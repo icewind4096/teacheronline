@@ -23,6 +23,7 @@ import java.util.List;
  * @author icewind4096
  * @since 2021-01-23
  */
+@CrossOrigin
 @Api(description = "讲师管理系统")
 @RestController
 @RequestMapping("/admin/edu/teacher")
