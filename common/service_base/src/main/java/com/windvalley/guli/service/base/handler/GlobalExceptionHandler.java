@@ -3,6 +3,7 @@ package com.windvalley.guli.service.base.handler;
 import com.windvalley.guli.common.base.result.R;
 import com.windvalley.guli.common.base.result.ResultCodeEnum;
 import com.windvalley.guli.common.base.util.ExceptionUtils;
+import com.windvalley.guli.service.base.exception.WindvalleyException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -27,5 +28,12 @@ public class GlobalExceptionHandler {
     public R error(HttpMessageNotReadableException e){
         log.error(ExceptionUtils.getMessage(e));
         return R.setResult(ResultCodeEnum.JSON_PARSE_ERROR);
+    }
+
+    @ExceptionHandler(WindvalleyException.class)
+    @ResponseBody
+    public R error(WindvalleyException e){
+        log.error(ExceptionUtils.getMessage(e));
+        return R.error().message(e.getMessage()).code(e.getCode());
     }
 }
