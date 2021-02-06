@@ -1,0 +1,14 @@
+server:
+  port: 8180
+
+spring:
+  profiles:
+    active: dev   #使用dev的环境配置
+  application:
+    name: service_oss
+aliyun:
+  oss:
+    endpoint: oss-cn-hangzhou.aliyuncs.com
+    keyid: LTAI4FzjLeKidJxkghycP1Ux
+    keysecret: 9oVq0tl1clDUrg3J9WV9D0wWiCSa4z
+    bucketname: windvalley-teacher
