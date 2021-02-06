@@ -49,6 +49,17 @@ public class TeacherController {
         }
     }
 
+    @ApiOperation(value = "批量删除讲师", notes = "根据讲师ID列表,删除讲师")
+    @PostMapping("batremove")
+    public R batRemoveById(@ApiParam("讲师Id列表") @RequestBody List<String> ids){
+        boolean result = teacherService.removeByIds(ids);
+        if (result){
+            return R.ok().message("批量删除成功");
+        } else {
+            return R.error().message("数据不存在");
+        }
+    }
+
     @ApiOperation("讲师分页列表")
     @PostMapping("list/{current}/{size}")
     public R listPage(@ApiParam(value = "当前页码", required = true) @PathVariable Long current
