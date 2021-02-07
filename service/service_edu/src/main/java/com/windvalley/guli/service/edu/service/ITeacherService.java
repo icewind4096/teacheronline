@@ -6,6 +6,9 @@ import com.windvalley.guli.service.edu.entity.Teacher;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.windvalley.guli.service.edu.vo.TeacherQueryVO;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * <p>
  * 讲师 服务类
@@ -17,4 +20,6 @@ import com.windvalley.guli.service.edu.vo.TeacherQueryVO;
 public interface ITeacherService extends IService<Teacher> {
 
     IPage<Teacher> selectPage(Page<Teacher> pagePara, TeacherQueryVO teacherQueryVO);
+
+    List<Map<String, Object>> getNameListByKey(String key);
 }

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -103,6 +104,13 @@ public class TeacherController {
         } else {
             return R.error().message("数据不存在");
         }
+    }
+
+    @ApiOperation("根据讲师姓名,获得讲师姓名列表")
+    @PostMapping("list/name/{key}")
+    public R getNameListByKey(@ApiParam(value = "查询讲师姓名条件", required = true) @PathVariable String key) {
+        List<Map<String, Object>> nameList = teacherService.getNameListByKey(key);
+        return R.ok().data("nameList", nameList);
     }
 }
 

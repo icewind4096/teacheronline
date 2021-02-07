@@ -11,6 +11,9 @@ import com.windvalley.guli.service.edu.vo.TeacherQueryVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * <p>
  * 讲师 服务实现类
@@ -48,5 +51,17 @@ public class TeacherService extends ServiceImpl<TeacherMapper, Teacher> implemen
         }
 
         return baseMapper.selectPage(pagePara, queryWrapper);
+    }
+
+    @Override
+    public List<Map<String, Object>> getNameListByKey(String key) {
+        QueryWrapper<Teacher> queryWrapper = new QueryWrapper();
+
+        queryWrapper.select("name");
+        if (!StringUtils.isEmpty(key)){
+            queryWrapper.likeRight("name", key);
+        }
+
+        return baseMapper.selectMaps(queryWrapper);
     }
 }
