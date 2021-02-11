@@ -1,3 +1,5 @@
+https://blog.csdn.net/abc465200/article/details/107493629
+
 #Windvalley 项目说明
 
 ##前端
@@ -233,6 +235,37 @@ module.exports = merge(prodEnv, {
 
 ##后端
 
+##安装mysql
+1. 下载mysql免安装版
+2. 解压
+3. 在解压目录中新建my.ini文件
+```text
+[mysql]
+# 设置mysql客户端默认字符集
+default-character-set=utf8 
+
+[mysqld]
+#设置3306端口
+port = 3306 
+# 设置mysql的安装目录
+basedir=D:\\softnew\\MYSQL\\mysql-5.7.20-winx64
+# 允许最大连接数
+max_connections=200
+# 服务端使用的字符集默认为8比特编码的latin1字符集
+character-set-server=utf8
+# 创建新表时将使用的默认存储引擎
+default-storage-engine=INNODB
+
+[client]
+port=3306
+default-character-set=utf8
+```
+4. mysqld --initialize-insecure 初始化mysql，必须用次命令，此时密码默认为空 
+5. mysqld -install 安装mysql 
+6. net start mysql 启动mysql服务
+7. mysql -uroot -p 登陆
+8. alter user 'root'@'localhost' identified by '你想要的密码';改密码
+
 ##spring boot
 ###配置要点
 + 如果需要在一个有数据源使用的多服务项目中，使用一个无数据源的项目，使用如下注解 
@@ -267,3 +300,52 @@ module.exports = merge(prodEnv, {
 #####基础样例
 >具体参考阿里云手册
 
+###注册服务中心
+####Nacos (spring cloud Alibaba)
+>Nacos = spring cloud eureka + spring cloud config + spring cloud bus
+
++ 安装
+   1. 注意必须要设置JAVA_HOME的路径，否则一定运行不起来   
+
++ 服务注册
+   1. 引入依赖
+      service_edu与service_oss都需要微服务注册，把依赖放入父节点Service的POM当中
+      ```html
+        <!-- 服务注册 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+
+      ```            
+   2. 添加配置信息
+      ```yaml
+        cloud:
+          nacos:
+            discovery:
+              server-addr: http://localhost:8848
+      ```
+   3. 启动类中添加注解
+      ```java
+        @EnableDiscoveryClient
+      ```  
+   4.  坑点   
+        ```yaml
+        application:
+          name: service-edu   //此处名字不可以包含下划线，否则会出现莫名其妙的问题
+        ```
++ 服务调用
+  1. 在调用项目的POM里配置依赖
+  ```html
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+    </dependencies>
+  ```  
+  2. 启动类中添加注解
+   ```java
+     @EnableFeignClients
+   ```  
+  
