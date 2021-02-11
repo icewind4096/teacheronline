@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.windvalley.guli.common.base.result.R;
 import com.windvalley.guli.service.edu.entity.Teacher;
+import com.windvalley.guli.service.edu.feign.IOssFileService;
 import com.windvalley.guli.service.edu.service.ITeacherService;
 import com.windvalley.guli.service.edu.vo.TeacherQueryVO;
 import io.swagger.annotations.Api;
@@ -31,6 +32,9 @@ import java.util.Map;
 public class TeacherController {
     @Autowired
     private ITeacherService teacherService;
+
+    @Autowired
+    private IOssFileService ossFileService;
 
     @ApiOperation("所有讲师列表")
     @PostMapping("list")
@@ -111,6 +115,13 @@ public class TeacherController {
     public R getNameListByKey(@ApiParam(value = "查询讲师姓名条件", required = true) @PathVariable String key) {
         List<Map<String, Object>> nameList = teacherService.getNameListByKey(key);
         return R.ok().data("nameList", nameList);
+    }
+
+    @ApiOperation("测试OSS服务调用")
+    @PostMapping("test")
+    public R test(){
+        ossFileService.test();
+        return R.ok();
     }
 }
 

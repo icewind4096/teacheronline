@@ -42,4 +42,11 @@ public class FileController {
             throw new WindvalleyException(ResultCodeEnum.FILE_UPLOAD_ERROR);
         }
     }
+
+    @ApiOperation(value = "测试微服务调用")
+    @PostMapping("test")
+    public R test(){
+        log.info("oss test 被调用");
+        return R.ok();
+    }
 }
