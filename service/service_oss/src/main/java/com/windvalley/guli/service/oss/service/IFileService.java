@@ -11,4 +11,5 @@ public interface IFileService {
      * @return
      */
     String upload(InputStream inputStream, String destDir, String originalFileName);
+    void delete(String url);
 }

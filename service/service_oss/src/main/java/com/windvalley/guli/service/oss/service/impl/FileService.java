@@ -57,8 +57,39 @@ public class FileService implements IFileService {
         return getUploadFileURL(ossProperties.getBucketname(), ossProperties.getEndpoint(), uploadFileName);
     }
 
+    @Override
+    public void delete(String url) {
+        // Endpoint以杭州为例，其它Region请按实际情况填写。
+        String endpoint = ossProperties.getEndpoint();
+
+        // 阿里云主账号AccessKey拥有所有API的访问权限，风险很高。强烈建议您创建并使用RAM账号进行API访问或日常运维，请登录 https://ram.console.aliyun.com 创建RAM账号。
+        String accessKeyId = ossProperties.getKeyid();
+        String accessKeySecret = ossProperties.getKeysecret();
+
+        // 创建OSSClient实例。
+        OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
+
+        // 如果bucket不存在，直接返回
+        if (ossClient.doesBucketExist(ossProperties.getBucketname())){
+            //删除文件
+            System.out.println(getObjectNameFromURL(url, ossProperties.getBucketname(), ossProperties.getEndpoint()));
+            ossClient.deleteObject(ossProperties.getBucketname(), getObjectNameFromURL(url, ossProperties.getBucketname(), ossProperties.getEndpoint()));
+        }
+
+        // 关闭OSSClient。
+        ossClient.shutdown();
+    }
+
+    private String getObjectNameFromURL(String url, String bucketname, String endpoint) {
+        return url.substring(getHostName(bucketname, endpoint).length());
+    }
+
     private String getUploadFileURL(String bucketname, String endpoint, String uploadFileName) {
-        return String.format("https://%s.%s/%s", bucketname, endpoint, uploadFileName);
+        return String.format("%s%s", getHostName(bucketname, endpoint), uploadFileName);
+    }
+
+    private String getHostName(String bucketname, String endpoint) {
+        return String.format("https://%s.%s/", bucketname, endpoint);
     }
 
     private String getDestFileName(String originalFileName) {

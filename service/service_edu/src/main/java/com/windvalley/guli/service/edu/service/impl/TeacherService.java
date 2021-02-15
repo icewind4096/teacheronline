@@ -3,12 +3,15 @@ package com.windvalley.guli.service.edu.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.windvalley.guli.common.base.result.R;
 import com.windvalley.guli.service.edu.entity.Teacher;
+import com.windvalley.guli.service.edu.feign.IOssFileService;
 import com.windvalley.guli.service.edu.mapper.TeacherMapper;
 import com.windvalley.guli.service.edu.service.ITeacherService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.windvalley.guli.service.edu.vo.TeacherQueryVO;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +27,8 @@ import java.util.Map;
  */
 @Service
 public class TeacherService extends ServiceImpl<TeacherMapper, Teacher> implements ITeacherService {
+    @Autowired
+    IOssFileService ossFileService;
 
     @Override
     public IPage<Teacher> selectPage(Page<Teacher> pagePara, TeacherQueryVO teacherQueryVO) {
@@ -63,5 +68,19 @@ public class TeacherService extends ServiceImpl<TeacherMapper, Teacher> implemen
         }
 
         return baseMapper.selectMaps(queryWrapper);
+    }
+
+    @Override
+    public Boolean deleteAvatarById(String id) {
+        Teacher teacher = baseMapper.selectById(id);
+
+        if (teacher != null){
+            if (StringUtils.isEmpty(teacher.getAvatar()) == false){
+                R r = ossFileService.deleteFile(teacher.getAvatar());
+                return r.getSuccess();
+            }
+        }
+
+        return false;
     }
 }

@@ -1,5 +1,7 @@
 server:
-  port: 8080
+  port: 8180
+  tomcat:
+    max-threads: 10   #tomcat最大并发修改为10，默认值为200
 
 spring:
   profiles:
@@ -18,6 +20,22 @@ spring:
     nacos:
       discovery:
         server-addr: localhost:8848 #nacos服务器地址
+    sentinel:
+      transport:
+        port: 8081 #与控制台交流的端口， 任意一个未使用的端口都可以
+        dashboard: localhost:8080 # 制定控制台服务地址
+#service-oss:
+#    ribbon:
+#      NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+ribbon:
+  MaxAutoRetries: 0 #同一实例最大重试次数,不包括首次调用，默认为0
+  MaxAutoRetriesNextServer: 1 #其他实例最大重试次数,不包括首次所选择的server，默认为1
+  OkToRetryOnAllOperations: false # 如果使用的是get方法，此值不管是否设置，都会执行一次重试，如果设置为post方法，则不会重试
+  ConnectTimeout: 5000 #连接建立的超时时长，默认1秒
+  ReadTimeout: 5000 #处理请求的超时时长，默认1秒
+feign:
+  sentinel:
+    enabled: true

@@ -11,11 +11,14 @@ import com.windvalley.guli.service.edu.vo.TeacherQueryVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+
+import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 /**
  * <p>
@@ -29,6 +32,7 @@ import java.util.Map;
 @Api(description = "讲师管理系统")
 @RestController
 @RequestMapping("/admin/edu/teacher")
+@Slf4j
 public class TeacherController {
     @Autowired
     private ITeacherService teacherService;
@@ -48,6 +52,8 @@ public class TeacherController {
     public R removeById(@ApiParam("讲师ID") @PathVariable String id){
         boolean result = teacherService.removeById(id);
         if (result){
+            teacherService.deleteAvatarById(id);
+
             return R.ok().message("删除成功");
         } else {
             return R.error().message("数据不存在");
@@ -101,7 +107,7 @@ public class TeacherController {
 
     @ApiOperation("根据讲师ID,获得讲师数据")
     @PostMapping("get/{id}")
-    public R delete(@ApiParam(value = "讲师ID", required = true) @PathVariable String id) {
+    public R getById(@ApiParam(value = "讲师ID", required = true) @PathVariable String id) {
         Teacher teacher = teacherService.getById(id);
         if (teacher != null){
             return R.ok().data("item", teacher);
@@ -122,6 +128,23 @@ public class TeacherController {
     public R test(){
         ossFileService.test();
         return R.ok();
+    }
+
+    @ApiOperation("测试并发服务")
+    @PostMapping("test_concurrent")
+    public R testConcurrent(){
+        log.info("test concurrent");
+        return R.ok();
+    }
+
+    @PostMapping("message1")
+    public String message1(){
+        return "message1";
+    }
+
+    @PostMapping("message2")
+    public String message2(){
+        return "message2";
     }
 }
 

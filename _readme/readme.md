@@ -335,17 +335,132 @@ default-character-set=utf8
           name: service-edu   //此处名字不可以包含下划线，否则会出现莫名其妙的问题
         ```
 + 服务调用
-  1. 在调用项目的POM里配置依赖
-  ```html
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-        </dependency>
-    </dependencies>
-  ```  
-  2. 启动类中添加注解
-   ```java
-     @EnableFeignClients
-   ```  
-  
+  + 调用端
+    + 在调用项目的POM里配置依赖
+      ```html
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-openfeign</artifactId>
+            </dependency>
+        </dependencies>
+      ```  
+    + 启动类中添加注解
+       ```java
+         @EnableFeignClients
+       ```
+    + 创建远程调用方法
+      ```java
+        @Service
+        @FeignClient("service-oss") //微服务注册到注册中心的名字
+        public interface IOssFileService {
+            @ApiOperation(value = "测试微服务调用")
+            @PostMapping("/admin/oss/file/test")    //必须是完整的远程调用地址
+              R test();
+        }
+      ```
+  + 被调用端(服务端)
+    + 创建调用接口
++ 负载均衡
+  + 配置多实例
+    + 选择需要提供多实例的项目
+    + 点击Edit Configurations
+    + 点击Copy Configurations
+    + VM Option添加  -DServer.port=8181 修改服务端口为8181,实现多实例
+  + 均衡策略
+    + 默认为轮询策略，交替访问
+    + 轮询方法参考Ribbon说明
+  + 配置均衡策略
+    在调用端配置
+    ```yaml
+    service-oss:
+      ribbon:
+        NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule #此处配置为随机策略
+    ```
++ Ribbon重试机制
+  + 重试配置
+    ```yaml
+        ribbon:
+            MaxAutoRetries: 0 #同一实例最大重试次数,不包括首次调用，默认为0
+            MaxAutoRetriesNextServer: 1 #其他实例最大重试次数,不包括首次所选择的server，默认为1
+            OkToRetryOnAllOperations: true # 如果使用的是get方法，此值不管是否设置，都会执行一次重试，如果设置为post方法且设置为false时，则不会重试
+            ConnectTimeout: 5000 #连接建立的超时时长，默认1秒
+            ReadTimeout: 5000 #处理请求的超时时长，默认1秒    
+            坑点:如果只有一台服务器，他会默认自己本身为下一台服务器，进行一次重试，
+            这个策略会在每台服务器上执行每个完整过程
+            如果集群里面有2台服务器，MaxAutoRetries=1， MaxAutoRetriesNextServer = 2，执行流程如下
+            A: 执行一次正常 执行一次重试 
+            B: 执行一次正常 执行一次重试 MaxAutoRetriesNextServer 第一次
+            A: 执行一次正常 执行一次重试 MaxAutoRetriesNextServer 第二次
+            一共调用6次, 切记切记
+    ```
++ 并发
+  + 工具 JMeter
+  + 修改Tomcat并发数
+    ```yaml
+        server:
+          port: 8080
+          tomcat:
+            max-threads: 10   #tomcat最大并发修改为10，默认值为200
+    ```
+  + 容错方案
+    + 隔离
+    + 超时
+    + 限流
+    + 熔断 
+    + 降级
+  + 选用方案
+    + 使用阿里的sentinel组件
+        + 基本概念
+          + 资源
+          + 规则
+        + 功能
+          + 流量控制
+            + 保证自己不被上级服务压垮
+          + 熔断降级
+            + 保证自己不被下游服务拖垮
+          + 系统负载保护
+            + 保证外界环境良好 (CPU RAM 网络)
+        + 控制台
+            + 启动控制台
+                ```java
+                    java -jar sentinel-dashboard-1.7.0.jar
+                ```                 
+            + 用户名 sentinel
+            + 密码 sentinel
+        + 客户端集成
+            ```xml
+                <!-- 服务组件 -->
+                    <dependency>
+                        <groupId>com.alibaba.cloud</groupId>
+                        <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+                    </dependency>
+            ```
+        + 添加测试方法
+            ```java
+                @PostMapping("message1")
+                public String message1(){
+                return "message1";
+                }
+            
+                @PostMapping("message2")
+                public String message2(){
+                return "message2";
+                }
+            ```
+        + 应用配置
+            ```xml
+                spring:
+                    cloud:
+                        sentinel:
+                            transport:
+                                port: 8081 #与控制台交流的端口， 任意一个未使用的端口都可以
+                                dashboard: localhost:8080 # 制定控制台服务地址
+            ```
+        + 系统整合配置
+            ```xml
+                feign:
+                    sentinel:
+                        enabled: true
+            ```
+          

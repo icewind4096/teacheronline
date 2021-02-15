@@ -18,8 +18,9 @@ import java.util.Map;
  * @since 2021-01-23
  */
 public interface ITeacherService extends IService<Teacher> {
-
     IPage<Teacher> selectPage(Page<Teacher> pagePara, TeacherQueryVO teacherQueryVO);
 
     List<Map<String, Object>> getNameListByKey(String key);
+
+    Boolean deleteAvatarById(String id);
 }

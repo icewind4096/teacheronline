@@ -1,6 +1,5 @@
 package com.windvalley.guli.service.oss.controller.admin;
 
-import com.sun.media.jfxmedia.logging.Logger;
 import com.windvalley.guli.common.base.result.R;
 import com.windvalley.guli.common.base.result.ResultCodeEnum;
 import com.windvalley.guli.common.base.util.ExceptionUtils;
@@ -14,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 @Api(description = "阿里云文件管理")
 @CrossOrigin
@@ -43,10 +42,25 @@ public class FileController {
         }
     }
 
+    @ApiOperation(value = "删除文件", notes = "删除阿里云中的文件")
+    @PostMapping("delete")
+    public R deleteFile(@ApiParam(value = "文件URL", required = true) @RequestBody String url){
+        fileService.delete(url);
+
+        return R.ok().message("删除文件成功").data("url", url);
+    }
+
     @ApiOperation(value = "测试微服务调用")
     @PostMapping("test")
     public R test(){
         log.info("oss test 被调用");
+        try {
+            TimeUnit.SECONDS.sleep(4);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return R.ok();
     }
+
+
 }
