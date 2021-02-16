@@ -7,7 +7,7 @@ import com.windvalley.guli.common.base.result.R;
 import com.windvalley.guli.service.edu.entity.Teacher;
 import com.windvalley.guli.service.edu.feign.IOssFileService;
 import com.windvalley.guli.service.edu.service.ITeacherService;
-import com.windvalley.guli.service.edu.vo.TeacherQueryVO;
+import com.windvalley.guli.service.edu.entity.vo.TeacherQueryVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-
-import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 /**
  * <p>

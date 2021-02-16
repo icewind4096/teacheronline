@@ -9,7 +9,7 @@ import com.windvalley.guli.service.edu.feign.IOssFileService;
 import com.windvalley.guli.service.edu.mapper.TeacherMapper;
 import com.windvalley.guli.service.edu.service.ITeacherService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.windvalley.guli.service.edu.vo.TeacherQueryVO;
+import com.windvalley.guli.service.edu.entity.vo.TeacherQueryVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

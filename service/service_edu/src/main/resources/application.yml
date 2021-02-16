@@ -30,6 +30,8 @@ spring:
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:com/windvalley/guli/service/edu/mapper/xml/*.xml
+
 ribbon:
   MaxAutoRetries: 0 #同一实例最大重试次数,不包括首次调用，默认为0
   MaxAutoRetriesNextServer: 1 #其他实例最大重试次数,不包括首次所选择的server，默认为1

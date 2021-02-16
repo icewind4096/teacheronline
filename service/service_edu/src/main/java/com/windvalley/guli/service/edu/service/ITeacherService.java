@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.windvalley.guli.service.edu.entity.Teacher;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.windvalley.guli.service.edu.vo.TeacherQueryVO;
+import com.windvalley.guli.service.edu.entity.vo.TeacherQueryVO;
 
 import java.util.List;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.windvalley.guli.service.edu.vo;
+package com.windvalley.guli.service.edu.entity.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
