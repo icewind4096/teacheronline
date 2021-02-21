@@ -88,8 +88,11 @@ public class TeacherController {
     @ApiOperation("保存讲师数据")
     @PostMapping("save")
     public R save(@ApiParam(value = "讲师对象", required = true) @RequestBody Teacher teacher) {
-        teacherService.save(teacher);
-        return R.ok().message("保存讲师数据成功");
+        if (teacherService.save(teacher)){
+            return R.ok().message("保存讲师数据成功");
+        } else {
+            return R.error().message("保存讲师数据失败");
+        }
     }
 
     @ApiOperation("修改讲师数据")
