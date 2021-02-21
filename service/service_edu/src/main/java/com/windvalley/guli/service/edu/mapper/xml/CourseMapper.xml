@@ -2,4 +2,36 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.windvalley.guli.service.edu.mapper.CourseMapper">
 
+    <sql id = "columns">
+        a.id, a.title, b.name as teacherName, a.lesson_num as lessonNum, CONVERT(a.price, DECIMAL(8,2)) AS price, a.cover, a.buy_count as buyCount, a.view_count as viewCount, a.status, a.gmt_create,
+        c1.title as subjectTitle, c2.title as subjectParentTitle,
+        d.description
+    </sql>
+
+    <sql id = "tables">
+        edu_course a
+        left join edu_teacher b on a.teacher_id = b.id
+        left join edu_subject c1 on a.subject_id = c1.id
+        left join edu_subject c2 on a.subject_parent_id = c2.id
+        left join edu_course_description d on a.id = d.id
+    </sql>
+
+    <select id="selectPageByCourseQuery" resultType="com.windvalley.guli.service.edu.entity.vo.CourseVO">
+        select <include refid="columns"></include>
+        from <include refid="tables"></include>
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="selectVideoByCourseId" resultType="com.windvalley.guli.service.edu.entity.Video">
+        select id, course_id, chapter_id, title, video_source_id, video_original_name, sort, play_count, is_free
+            ,duration, status, size, version, gmt_create, gmt_modified
+        from edu_video
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="selectCoursePublishVOById" resultType="com.windvalley.guli.service.edu.entity.vo.CoursePublishVO">
+        select a.id, a.title, b.name as teacherName, a.lesson_num as lessonNum, CONVERT(a.price, DECIMAL(8,2)) AS price, a.cover, c1.title as subjectTitle, c2.title as subjectParentTitle
+        from <include refid="tables"></include>
+        where a.id = #{id}
+    </select>
 </mapper>

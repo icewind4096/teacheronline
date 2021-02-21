@@ -4,6 +4,38 @@ https://blog.csdn.net/abc465200/article/details/107493629
 
 ##前端
 
+###软件安装
++ VSCode  
+    + 安装插件
+        + Chinese Language
+        + ESLint
+        + Live Server
+        + Node.js Modules Intellisense
+        + Vetur
+        + VueHelper
+    + 设置
+        Emment: Trigger Expansion On Tab = True
++ Node.js
+
+###NPM项目
+>package.json为项目文件
++ 修改npm配置
+  + 查看默认配置信息
+    npm config list
+  + 修改默认仓库
+    npm config set registry http://registry.npm.taobao.org
++ 建立项目
+    + npm init 初始化一个NPM项目, 
+    + npm init -y 初始化一个NPM项目,所有需要确认的全部同意      
++ 安装依赖
+    + npm install 直接导入一个npm项目
+    + npm install 你需要安装的依赖包
+      + npm install jquery 安装jQuery的最新版本
+      + npm install jquery@2.1.3 安装jQuery的2.1.3版本
+    + npm install -g webpack 安装打包模块
+    + npm install -g webpack-cli 安装打包模块
+    + npm install -D style-loader css-loader 安装css打包
+
 ###前端组件三要素
 >main.js引用App.vue和src/router/index.js,根据路由配置，App.vue显示对应的页面内容
 
@@ -38,9 +70,6 @@ https://blog.csdn.net/abc465200/article/details/107493629
    
 3. 路由: src/router/index.js
       
-
-
-
 ###项目开发流程
 1. 创建路由(router  src/router)
 2. 创建API(API  src/api)
@@ -111,6 +140,26 @@ https://blog.csdn.net/abc465200/article/details/107493629
 5. 路由跳转,简单说就是页面跳转到/teacher/list
 ```javascript
     this.$router.push({ path: '/teacher/list' })
+```
+
+6. 使用组件
+```javascript
+<script>
+    
+import Info from '@/views/course/components/Info.vue' //导入使用的组件
+import Chapter from '@/views/course/components/chapter/Index.vue' //导入使用的组件
+import Publish from '@/views/course/components/Publish.vue' //导入使用的组件
+
+export default {
+  components: { Info, Chapter, Publish },  //注册使用的组件
+  data() {
+    return {
+      active: 1,
+      courseId: null //  当前编辑课程id
+    }
+  }
+}
+</script>
 ```
 ##webpack打包产生最终代码
 >webpack打包流程，已经基本得编译流程，后续继续添加
@@ -232,6 +281,8 @@ module.exports = merge(prodEnv, {
   ```javascript
   this.$forceUpdate()
   ```
++ :xxx = V-BIND:xxx 用于绑定数据和元素属性
++ this.$parent.xx 访问父组件的xxx
 
 ##后端
 
@@ -498,4 +549,33 @@ default-character-set=utf8
         </dependency>
     </dependencies>
     ```
-          
+###事务处理
++ 必须在mybatis配置类中，允许事务
+```java
+@EnableTransactionManagement //必须在mybatis配置类中，允许事务
+@Configuration
+@MapperScan("com.windvalley.guli.service.*.mapper")
+public class MybatisPlusConfig {
+    /*
+    分页插件
+     */
+    @Bean
+    public PaginationInterceptor paginationInterceptor(){
+        return new PaginationInterceptor();
+    }
+}
+```
++ 在对应的Service开启事务注解
+```java
+    @Transactional(rollbackFor = Exception.class) //只要发生异常就回滚
+    @Override
+    public String saveCourseInfo(CourseInfoForm courseInfoForm) {
+        //保存 cursor
+        Course course = saveCourseInfoByFormInfo(courseInfoForm);
+
+        //保存 cursor description
+        saveCourseDescByFormInfo(course.getId(), courseInfoForm);
+
+        return course.getId();
+    }
+```

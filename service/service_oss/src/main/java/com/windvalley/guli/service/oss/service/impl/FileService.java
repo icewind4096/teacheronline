@@ -6,6 +6,7 @@ import com.aliyun.oss.model.CannedAccessControlList;
 import com.aliyun.oss.model.PutObjectRequest;
 import com.windvalley.guli.service.oss.service.IFileService;
 import com.windvalley.guli.service.oss.utils.OSSProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import java.io.InputStream;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class FileService implements IFileService {
     //OSS配置信息自动注入
     @Autowired
@@ -72,7 +74,7 @@ public class FileService implements IFileService {
         // 如果bucket不存在，直接返回
         if (ossClient.doesBucketExist(ossProperties.getBucketname())){
             //删除文件
-            System.out.println(getObjectNameFromURL(url, ossProperties.getBucketname(), ossProperties.getEndpoint()));
+            log.info("删除文件:{}", getObjectNameFromURL(url, ossProperties.getBucketname(), ossProperties.getEndpoint()));
             ossClient.deleteObject(ossProperties.getBucketname(), getObjectNameFromURL(url, ossProperties.getBucketname(), ossProperties.getEndpoint()));
         }
 
