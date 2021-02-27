@@ -4,6 +4,8 @@ import com.windvalley.guli.service.edu.entity.Chapter;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * <p>
  * 课程 Mapper 接口
@@ -14,5 +16,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ChapterMapper extends BaseMapper<Chapter> {
-
+    List<Chapter> selectByCourseId(String courseId);
 }

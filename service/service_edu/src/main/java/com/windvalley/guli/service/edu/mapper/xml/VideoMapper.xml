@@ -2,4 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.windvalley.guli.service.edu.mapper.VideoMapper">
 
+    <select id="selectByCourseId" resultType="com.windvalley.guli.service.edu.entity.Video">
+        select id, course_id, chapter_id, title, video_source_id, video_original_name, sort, play_count, is_free, duration
+	    ,status, size, version, gmt_create, gmt_modified
+        from edu_video
+        where course_id = #{courseId}
+        order by sort
+    </select>
 </mapper>

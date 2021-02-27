@@ -2,4 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.windvalley.guli.service.edu.mapper.ChapterMapper">
 
+    <select id="selectByCourseId" resultType="com.windvalley.guli.service.edu.entity.Chapter">
+        select id, course_id, title, sort, gmt_create, gmt_modified
+        from edu_chapter
+        where course_id = #{courseId}
+        order by sort
+    </select>
 </mapper>

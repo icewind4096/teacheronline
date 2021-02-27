@@ -4,6 +4,8 @@ import com.windvalley.guli.service.edu.entity.Video;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * <p>
  * 课程视频 Mapper 接口
@@ -15,4 +17,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface VideoMapper extends BaseMapper<Video> {
 
+    List<Video> selectByCourseId(String courseId);
 }
