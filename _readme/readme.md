@@ -332,6 +332,53 @@ default-character-set=utf8
 
 
 ###阿里云服务
+
+####VOD 阿里云视频服务
+#####上传视频
++ 安装上传SDK
+  mvn install:install-file -Dfile=aliyun-sdk-oss-3.1.0 -DgroupId=com.aliyun -DartifactId=aliyun-sdk-oss -Dversion=3.1.0 -Dpackaging=jar
+
+#####客户端播放
+######使用H5方式
+```javascript
+    <script>
+        var player = new Aliplayer({
+        id: 'J_prismPlayer',
+        width: '100%',
+        autoplay: true,
+        //播放方式一: 支持播放地址播放,此播放优先级最高
+        //可以在阿里云点播控制台里可以直接获得 
+        //例如 https://outin-903e387f775e11eba1fa00163e1c35d5.oss-cn-shanghai.aliyuncs.com/sv/54d1b653-177e16c628b/54d1b653-177e16c628b.mp4?Expires=1614399228&OSSAccessKeyId=LTAIrkwb21KyGjJl&Signature=5d0Dmx0uvxlWZ743lrmZheQFxDo%3D
+        source : '播放url',
+
+        //播放方式二：点播用户推荐
+        //可以在阿里云点播控制台里可以直接获得
+        //基础配置中的ID
+        vid : '1e067a2831b641db90d570b6480fbc40',
+        //
+        playauth : 'ddd',
+        cover: 'http://liveroom-img.oss-cn-qingdao.aliyuncs.com/logo.png',
+        encryptType:1, //当播放私有加密流时需要设置。
+
+        //播放方式三：仅MPS用户使用
+        vid : '1e067a2831b641db90d570b6480fbc40',
+        accId: 'dd',
+        accSecret: 'dd',
+        stsToken: 'dd',
+        domainRegion: 'dd',
+        authInfo: 'dd',
+        //播放方式四：使用STS方式播放
+        vid : '1e067a2831b641db90d570b6480fbc40',
+        accessKeyId: 'dd',
+        securityToken: 'dd',
+        accessKeySecret: 'dd',
+         region:'cn-shanghai',//eu-central-1,ap-southeast-1
+        },function(player){
+            console.log('播放器创建好了。')
+       });
+    </script>
+```
+
 ####oss 云储存服务
 #####安装
 + 方式一：在Maven项目中加入依赖项在Maven工程中使用OSS Java SDK，只需在pom.xml中加入相应依赖即可。以3.10.2版本为例，在<dependencies>中加入如下内容：

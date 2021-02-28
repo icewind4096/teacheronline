@@ -63,7 +63,7 @@ public class VideoController {
     @ApiOperation(value = "删除课时", notes = "根据章节ID,删除讲师")
     @PostMapping("remove/{id}")
     public R removeById(@ApiParam("章节ID") @PathVariable String id){
-        // TODO: 2021/2/22 删除视频
+        videoService.removeMediaVideoById(id);
 
         if (videoService.removeById(id)){
             return R.ok().message("删除成功");

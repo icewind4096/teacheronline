@@ -11,6 +11,7 @@ import com.windvalley.guli.service.edu.entity.vo.CourseQueryVO;
 import com.windvalley.guli.service.edu.entity.vo.CourseVO;
 import com.windvalley.guli.service.edu.entity.vo.TeacherQueryVO;
 import com.windvalley.guli.service.edu.service.ICourseService;
+import com.windvalley.guli.service.edu.service.IVideoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -36,6 +37,9 @@ import java.util.List;
 public class CourseController {
     @Autowired
     ICourseService courseService;
+
+    @Autowired
+    IVideoService videoService;
 
     @ApiOperation("新增课程")
     @PostMapping("save")
@@ -82,6 +86,8 @@ public class CourseController {
     @PostMapping("remove/{id}")
     public R removeById(@ApiParam("课程ID") @PathVariable String id){
         courseService.removeCoverById(id);
+
+        videoService.removeMediaVideoByCourseId(id);
 
         boolean result = courseService.removeCursorById(id);
         if (result){

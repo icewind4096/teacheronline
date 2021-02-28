@@ -13,7 +13,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.aliyun.oss</groupId>
+            <groupId>com.aliyun</groupId>
             <artifactId>aliyun-sdk-oss</artifactId>
         </dependency>
     </dependencies>

@@ -7,6 +7,7 @@ import com.windvalley.guli.service.edu.entity.Teacher;
 import com.windvalley.guli.service.edu.entity.form.CourseInfoForm;
 import com.windvalley.guli.service.edu.entity.vo.ChapterVO;
 import com.windvalley.guli.service.edu.entity.vo.SubjectVO;
+import com.windvalley.guli.service.edu.service.IVideoService;
 import com.windvalley.guli.service.edu.service.impl.ChapterService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,6 +34,9 @@ import java.util.List;
 public class ChapterController {
     @Autowired
     private ChapterService chapterService;
+
+    @Autowired
+    private IVideoService videoService;
 
     @ApiOperation("新增章节")
     @PostMapping("save")
@@ -66,10 +70,10 @@ public class ChapterController {
         }
     }
 
-    @ApiOperation(value = "删除章节", notes = "根据章节ID,删除讲师")
+    @ApiOperation(value = "删除章节", notes = "根据章节ID,删除章节")
     @PostMapping("remove/{id}")
     public R removeById(@ApiParam("章节ID") @PathVariable String id){
-        // TODO: 2021/2/22 删除视频
+        videoService.removeMediaVideoByChapterId(id);
 
         if (chapterService.removeChapterById(id)){
             return R.ok().message("删除成功");
