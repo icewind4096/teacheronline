@@ -16,6 +16,14 @@
         left join edu_course_description d on a.id = d.id
     </sql>
 
+    <sql id = "webcolumns">
+        a.id, a.title, b.name as teacherName, a.lesson_num as lessonNum, CONVERT(a.price, DECIMAL(8,2)) AS price, a.cover, a.buy_count as buyCount, a.view_count as viewCount, a.status, a.gmt_create,
+        b.id as teacherId, b.intro, b.avatar,
+        c2.id as subjectLevelOneId, c2.title as subjectLevelOne,
+        c1.id as subjectLevelTwoId, c1.title as subjectLevelTwo,
+        d.description
+    </sql>
+
     <select id="selectPageByCourseQuery" resultType="com.windvalley.guli.service.edu.entity.vo.CourseVO">
         select <include refid="columns"></include>
         from <include refid="tables"></include>
@@ -33,5 +41,17 @@
         select a.id, a.title, b.name as teacherName, a.lesson_num as lessonNum, CONVERT(a.price, DECIMAL(8,2)) AS price, a.cover, c1.title as subjectTitle, c2.title as subjectParentTitle
         from <include refid="tables"></include>
         where a.id = #{id}
+    </select>
+
+    <select id="selectListByTeacherId" resultType="com.windvalley.guli.service.edu.entity.vo.CourseVO">
+        select <include refid="columns"></include>
+        from <include refid="tables"></include>
+        where a.teacher_id = #{teacherId}
+    </select>
+
+    <select id="selectWebCourseVOById" resultType="com.windvalley.guli.service.edu.entity.vo.WebCourseVO">
+        select <include refid="webcolumns"></include>
+        from <include refid="tables"></include>
+        where a.id = #{courseId}
     </select>
 </mapper>

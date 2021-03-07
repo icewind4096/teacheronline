@@ -5,9 +5,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.windvalley.guli.service.edu.entity.Course;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.windvalley.guli.service.edu.entity.form.CourseInfoForm;
-import com.windvalley.guli.service.edu.entity.vo.CoursePublishVO;
-import com.windvalley.guli.service.edu.entity.vo.CourseQueryVO;
-import com.windvalley.guli.service.edu.entity.vo.CourseVO;
+import com.windvalley.guli.service.edu.entity.vo.*;
+
+import java.util.List;
 
 /**
  * <p>
@@ -33,4 +33,8 @@ public interface ICourseService extends IService<Course> {
     CoursePublishVO getCoursePublishVOById(String id);
 
     boolean publishCourseById(String id);
+
+    List<Course> webSelectList(WebCourseQueryVO webCourseQueryVO);
+
+    WebCourseVO selectWebCourseVOById(String courseId);
 }

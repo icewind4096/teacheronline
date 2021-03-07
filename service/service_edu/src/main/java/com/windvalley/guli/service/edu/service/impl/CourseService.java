@@ -6,9 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.windvalley.guli.common.base.result.R;
 import com.windvalley.guli.service.edu.entity.*;
 import com.windvalley.guli.service.edu.entity.form.CourseInfoForm;
-import com.windvalley.guli.service.edu.entity.vo.CoursePublishVO;
-import com.windvalley.guli.service.edu.entity.vo.CourseQueryVO;
-import com.windvalley.guli.service.edu.entity.vo.CourseVO;
+import com.windvalley.guli.service.edu.entity.vo.*;
 import com.windvalley.guli.service.edu.feign.IOssFileService;
 import com.windvalley.guli.service.edu.mapper.*;
 import com.windvalley.guli.service.edu.service.ICourseService;
@@ -20,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.*;
+import java.util.List;
 
 /**
  * <p>
@@ -238,5 +237,53 @@ public class CourseService extends ServiceImpl<CourseMapper, Course> implements 
         course.setStatus(Course.COURSE_NORMAL);
 
         return baseMapper.updateById(course) > 0;
+    }
+
+    @Override
+    public List<Course> webSelectList(WebCourseQueryVO webCourseQueryVO) {
+        QueryWrapper<Course> queryWrapper = new QueryWrapper();
+
+        queryWrapper.eq("status", Course.COURSE_NORMAL);
+
+        if (!StringUtils.isEmpty(webCourseQueryVO.getSubjectParentId())){
+            queryWrapper.eq("subject_parent_id", webCourseQueryVO.getSubjectParentId());
+        }
+
+        if (!StringUtils.isEmpty(webCourseQueryVO.getSubjectId())){
+            queryWrapper.eq("subject_id", webCourseQueryVO.getSubjectId());
+        }
+
+        if (!StringUtils.isEmpty(webCourseQueryVO.getBuyCountSort())){
+            queryWrapper.orderByDesc("buy_count");
+        }
+
+        if (!StringUtils.isEmpty(webCourseQueryVO.getGmtCreateSort())){
+            queryWrapper.orderByDesc("gmt_create");
+        }
+
+        if (!StringUtils.isEmpty(webCourseQueryVO.getPriceSort())){
+            if (webCourseQueryVO.getOrderBy() == null || webCourseQueryVO.getOrderBy().equals("1")){
+                queryWrapper.orderByDesc("price");
+            } else {
+                queryWrapper.orderByAsc("price");
+            }
+        }
+
+        if (!StringUtils.isEmpty(webCourseQueryVO.getBuyCountSort())){
+            queryWrapper.orderByDesc("buy_count");
+        }
+
+        return baseMapper.selectList(queryWrapper);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public WebCourseVO selectWebCourseVOById(String courseId) {
+        Course course = baseMapper.selectById(courseId);
+        course.setViewCount(course.getViewCount() + 1);
+
+        baseMapper.updateById(course);
+
+        return baseMapper.selectWebCourseVOById(courseId);
     }
 }

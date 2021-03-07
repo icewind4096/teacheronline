@@ -31,7 +31,7 @@ https://blog.csdn.net/abc465200/article/details/107493629
     + npm install 直接导入一个npm项目
     + npm install 你需要安装的依赖包
       + npm install jquery 安装jQuery的最新版本
-      + npm install jquery@2.1.3 安装jQuery的2.1.3版本
+      + npm install jquery@2.1.3 安装jQuery的2.1.3版本f
     + npm install -g webpack 安装打包模块
     + npm install -g webpack-cli 安装打包模块
     + npm install -D style-loader css-loader 安装css打包
@@ -161,6 +161,14 @@ export default {
 }
 </script>
 ```
+6. 修改调用服务器地址 util\request.js
+```javascript
+const service = axios.create({
+  baseURL: 'http://localhost:8180', //此处为目标服务器地址
+  timeout: 12000 // 请求超时时间
+})
+```
+
 ##webpack打包产生最终代码
 >webpack打包流程，已经基本得编译流程，后续继续添加
 1. 由package.json文件中的"dev":"webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",，找到webpack.dev.conf.js文件
@@ -283,6 +291,40 @@ module.exports = merge(prodEnv, {
   ```
 + :xxx = V-BIND:xxx 用于绑定数据和元素属性
 + this.$parent.xx 访问父组件的xxx
+
+## Nuxt使用
+>客户端渲染
+1. 异步数据获取, 在前端服务器执行, asyncData()在所有方法之前就被建立，类似于类的静态方法，对象不被Create，就已经存在，只能调用一个API
+```javascript
+  asyncData(page) {
+    return teacherApi.get(page.route.params.id).then(response => {
+      console.log(response.data)
+      return {
+        teacher: response.data.items.teacher,
+        courseList: response.data.items.courseList
+      }
+    })
+  }
+```
+2. 同步数据获取, 在前端服务器执行, async asyncData() wait, 可以调用多个API
+```javascript
+  async asyncData(page) {                                                           //区别1. 多了 async关键字
+    const response = await teacherApi.get(page.route.params.id)                     //区别2. 多了 await关键字
+    teacher: response.data.items.teacher,
+    const response = await teacherApi.getCourseByTeacheId(page.route.params.id)     //区别2. 多了 await关键字
+    courseList: response.data.items.courseList
+```
+## querystring 
+>URL参数拼接工具
+```javascript
+      const queryObject = {
+        subjectParentId: 10
+        subjectId: 20
+        buyCountSort: 1
+      }
+      const queryString = querystring.stringify(queryObject)
+      此处 queryString = "subjectParentId=10&subjectId=20&buyCountSort=1"   
+```
 
 ##后端
 

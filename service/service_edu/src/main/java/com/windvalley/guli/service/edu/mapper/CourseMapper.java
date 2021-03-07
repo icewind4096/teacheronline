@@ -9,8 +9,11 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.windvalley.guli.service.edu.entity.Video;
 import com.windvalley.guli.service.edu.entity.vo.CoursePublishVO;
 import com.windvalley.guli.service.edu.entity.vo.CourseVO;
+import com.windvalley.guli.service.edu.entity.vo.WebCourseVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * <p>
@@ -28,4 +31,8 @@ public interface CourseMapper extends BaseMapper<Course> {
     Video selectVideoByCourseId(@Param(Constants.WRAPPER) QueryWrapper<Video> queryWrapper);
 
     CoursePublishVO selectCoursePublishVOById(String id);
+
+    List<CourseVO> selectListByTeacherId(String teacherId);
+
+    WebCourseVO selectWebCourseVOById(String courseId);
 }

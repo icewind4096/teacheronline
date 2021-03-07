@@ -6,8 +6,7 @@ import com.aliyun.vod.upload.resp.UploadStreamResponse;
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
-import com.aliyuncs.vod.model.v20170321.DeleteVideoRequest;
-import com.aliyuncs.vod.model.v20170321.DeleteVideoResponse;
+import com.aliyuncs.vod.model.v20170321.*;
 import com.windvalley.guli.common.base.result.ResultCodeEnum;
 import com.windvalley.guli.service.base.exception.WindvalleyException;
 import com.windvalley.guli.service.vod.service.IVideoService;
@@ -98,5 +97,30 @@ public class VideoService implements IVideoService {
         DefaultProfile profile = DefaultProfile.getProfile(regionId, accessKeyId, accessKeySecret);
         DefaultAcsClient client = new DefaultAcsClient(profile);
         return client;
+    }
+
+    /**
+     * 获取视频信息
+     * @param client 发送请求客户端
+     * @return GetVideoInfoResponse 获取视频信息响应数据
+     * @throws Exception
+     */
+    public static GetVideoInfoResponse getVideoInfo(DefaultAcsClient client, String videoSourceId) throws Exception {
+        GetVideoInfoRequest request = new GetVideoInfoRequest();
+        request.setVideoId(videoSourceId);
+        return client.getAcsResponse(request);
+    }
+
+    @Override
+    public String getPlayAuthByVideoSourceId(String videoSourceId) throws ClientException {
+        DefaultAcsClient client = initVodClient(vodProperties.getKeyid(), vodProperties.getKeysecret());
+
+        GetVideoPlayAuthRequest request = new GetVideoPlayAuthRequest();
+        request.setVideoId(videoSourceId);
+        request.setAuthInfoTimeout(200L);  //200秒内必须播放，否则凭证无效
+
+        GetVideoPlayAuthResponse response = client.getAcsResponse(request);
+
+        return response.getPlayAuth();
     }
 }
