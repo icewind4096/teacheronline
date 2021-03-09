@@ -370,8 +370,25 @@ default-character-set=utf8
 + 编写自定义异常类WindvalleyException，代码位于service_base.src.main.java.excepiton.WindvalleyException
 + 在阿里云oss上传模块中，捕获异常后重新抛出为自定义异常 代码位于service_oss.src.main.java.oss.controller.admin.FileController
 + 在控制器切面处统一处理自定义异常，代码位于service_base.src.main.java.handler.GlobalExceptionHandler
+###打包
+>如果使用了mybatis,spring默认打包是不包含mapper.xml文件的，所以要在pom.xml中添加包含xml的例外，以便项目打包时把xml文件也打包在内。
+```xml
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+    </build>
+```
 
-
+##mybatis
+###使用代码生成器产生框架代码
+>具体参考test目录下得CodeGenerator.java
 
 ###阿里云服务
 

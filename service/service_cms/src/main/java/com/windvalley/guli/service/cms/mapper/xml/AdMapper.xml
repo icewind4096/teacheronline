@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.windvalley.guli.service.cms.mapper.AdMapper">
+
+    <sql id = "columns">
+        a.id, a.title, a.type_id, b.title as type, a.image_url, a.color, a.link_url, a.sort, a.gmt_create
+    </sql>
+
+    <sql id = "tables">
+        cms_ad a
+        left join cms_ad_type b on a.type_id = b.id
+    </sql>
+
+    <select id="selectPageByWrapper" resultType="com.windvalley.guli.service.cms.entity.VO.AdVO">
+        select <include refid="columns"></include>
+        from <include refid="tables"></include>
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="selectListByAdTypeId" resultType="com.windvalley.guli.service.cms.entity.Ad">
+        select <include refid="columns"></include>
+        from <include refid="tables"></include>
+        ${ew.customSqlSegment}
+    </select>
+</mapper>
