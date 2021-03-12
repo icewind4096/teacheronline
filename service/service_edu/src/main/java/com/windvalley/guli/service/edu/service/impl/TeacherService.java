@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.windvalley.guli.common.base.result.R;
-import com.windvalley.guli.service.edu.entity.Course;
 import com.windvalley.guli.service.edu.entity.Teacher;
 import com.windvalley.guli.service.edu.entity.vo.CourseVO;
 import com.windvalley.guli.service.edu.feign.IOssFileService;
@@ -15,6 +14,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.windvalley.guli.service.edu.entity.vo.TeacherQueryVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -102,5 +102,15 @@ public class TeacherService extends ServiceImpl<TeacherMapper, Teacher> implemen
         map.put("courseList", courses);
 
         return map;
+    }
+
+    @Cacheable(value = "index", key = "'selectHotTeacher'")
+    @Override
+    public List<Teacher> selectHotTeacher() {
+        QueryWrapper<Teacher> queryWrapper = new QueryWrapper();
+        queryWrapper.orderByDesc("sort");
+        queryWrapper.last("limit 8");
+
+        return baseMapper.selectList(queryWrapper);
     }
 }

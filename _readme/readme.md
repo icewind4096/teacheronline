@@ -390,6 +390,222 @@ default-character-set=utf8
 ###使用代码生成器产生框架代码
 >具体参考test目录下得CodeGenerator.java
 
+##redis
+###安装
+> 安装GCC编译器，否则编译出错
+> yum install -y gcc g++ gcc-c++ make
+> 安装tcl， 否则运行redis make test命令可能会失败  
+> sudo yum install tcl
+1. wget http://download.redis.io/releases/redis-5.0.7.tar.gz
+2. tar -zvxf redis-5.0.7.tar.gz
+3. mv /root/redis-5.0.7 /usr/local/redis
+4. cd /usr/local/redis
+5. make   -> 此处为编译
+6. make PREFIX=/usr/local/redis install ->此处为安装
+7. 调试阶段 关闭防火墙 systemctl stop firewalld
+8. 调试阶段 开机禁用防火墙 systemctl disable firewalld
+7. 编辑redis.conf 
+8. 注释 bind 127.0.0.1
+9. 关闭保护模式 protected-mode = no
+10. 运行 src/redis-server redis.conf
+11. 修改redis数据库文件 xxx.rdb的权限, 例如 chmod 777 dump.rdb
+
+###基本用法
+#### redis基本数据类型     
+    string(字符串)  
+    list(链表)
+    set(无序集合)  
+    sorted set(有序集合)  
+    hash(Hash表)
+#### redis服务/客户端启动  
+    ./redis-server                               //正常服务模式启动 port= 6379   
+    ./redis-cli                                  //客户端启动   
+    ./redis-cli shutdown                         //关闭服务   
+#### 修改redis.conf文件中
+    port=xxxx                                    //指定默认启动端口  
+    requirepass password                         //指定密码
+    ./redis-server ..redis.conf                  //指定配置文件启动服务
+    ./redis-server --port 6380                   //指定端口启动 port= 6380
+    ./redis-cli -p 6380                          //客户端指定端口启动
+    ./redis-cli -p 6380 shutdown                 //关闭服务
+    ./redis-cli -p 6379 -h 127.0.0.1             //连接指定ip port的redis服务
+    ./redis-cli -p 6379 -h 127.0.0.1 shutdown    //关闭指定ip port的redis服务
+    ./redis-cli -p 6380 -a password              //使用密码连接
++ redis基本命令
+   + info                                         //系统信息
+   + select ${number}                             //选择DB
+   + flushdb                                      //清除当前选择的db数据
+   + flushall                                     //清除全部db数据
+   + ping                                         //回音，返回pong
+   + dbsize                                       //当前db大小
+   + save                                         //使redis数据持久化
+   + quit                                         //退出redis-cli连接
+   + clear                                        //清除屏幕
+   + monitor                                      //查看日志
++ redis键命令
+   + keys *                                       //显示当前db中的全部键
+   + set key data                                 //设置一个键值对
+    + set test 测试数据
+   + del key                                      //删除一个键值对
+        + del test        
+   + exists key                                    //判断一个键值是否存在
+        + exists test                                  //存在返回1 不存在返回0
+   + ttl key                                       //time to level 查看键的剩余生存时间, 单位为秒, 如果返回值为-1，表示无过期时间, -2表示键不存在
+        + ttl test
+   + expire test time                             //设置键的生存时间，单位秒
+        + expire test 10  
+   + type key                                     //返回键的类型
+   + randomkey                                    //随机键
+   + rename oldKey newKey                         //把oldkey替换为newkey, 如果newKey存在于db中，则newKey会覆盖db中存在的键值
+        + rename oldTest newTest
+   + renameNX oldKey newKey                       //nx的命令，都带条件判断, 把oldkey替换为newkey,  如果newKey存在于db中，则rename不成功
+        renameNX oldTest newTest
+6. redis-string
+   + setex key sec value                          //setex(set expire)  时间单位为秒
+        + setex c 100 c
+   + psetex key msec value                        //setex(set expire)  时间单位为毫秒
+        + psetex d 10000 d
+   + getrange key start end                       //取value，从start开始 end结束 以0开始
+        + set country china
+   + getrange country 0 2                        //返回 chi
+   + getset key value                             //先get后set
+        + set a a
+        + setget a aa                                 //返回a
+   + mset key1 value1 key2 value2 key3 value3     //批量设置键值对
+        + mset a a1 b b1 c c1
+   + mget key1 key2 key3                          //批量取得多个值
+        + mget a b c
+   + setNx key value                              //先判断，如果Key存在于db中，则set不成功
+   + msetNx key value                             //批量设置 先判断，如果Key存在于db中，则set不成功 必须全部不存在（原子操作）
+   + setlen value                                 //返回key对应的value的长度
+   + incr key                                     //如果key对应的是数值，则把key对应的value加1
+   + decr key                                     //如果key对应的是数值，则把key对应的value减1
+   + incrby key step                              //如果key对应的是数值，则把key对应的value加step个
+   + decrby key step                              //如果key对应的是数值，则把key对应的value减step个
+   + append key appendValue                       //把key对应的value拼接上appendValue
+6. redis-hash
+   a. hset map key value                           //设置一个hash key是map 值是 key value的键值对  
+        hset map name wangjian   
+   b. hexists key key1                             //返回为key的hash中的key1是否存在  
+   b. hget key key1                                //返回为key的hash中的key1对应的值  
+   c. hgetall map                                  //返回全部的hash内的key和value  
+   d. hkeys key                                    //返回全部的key对应的hash中的key值  
+   e. hvals key                                    //返回全部的key对应的hash中的value值      
+   f. hlen key                                     //返回key对应的hash中的数量  
+   g. hmget key key1 key2                          //返回key对应的hash中的key1 key2对应的值  
+   h. hmset key key1 value1 key2 value2            //设置key对应的hash中的key1 key2对应的 value1 value2  
+   i. hdel key key1 key2                           //删除key对应的hash中的key1 key2  
+   i. hsetnx key key1 value1                       //批量设置 先判断，如果Key对应的hash存在于db中，并且key1存在,  则set不成功（原子操作）  
+7. redis-list(允许出现重复值, 以stack方式存放，先放的在最后)  
+   a. lpush key value1 value2 value3 .. valuen     //批量设置名称为key的list中的value值  
+   b. llen key                                     //返回名称为key的list的长度  
+   c. lrange key start end                         //返回名称为key的list的单元从start开始到end结束的值 0为起始  
+   d. lset key pos value                           //设置名称为key的list的第pos个单元的值为value  
+   e. lindex key pos                               //返回名称为key的list的第pos个单元的值  
+   f. lpop key                                     //移除名称为key的list的第1个单元  
+   f. rpop key                                     //移除名称为key的list的最后1个单元  
+8. redis-set(不允许出现重复值)  
+   a. sadd key value1 value2 ... valuen            //批量添加名称为key的set中的value值, 如果value已经存在，不添加，不存在的value值会继续添加，不会报错  
+   b. scard key                                    //返回名称为key的set的数量  
+   c. smembers key                                 //返回名称为key的set的成员  
+   d. sdiff key1 key2                              //返回名称为key1的set对于key2的set的不同点  
+   e. sinter key1 key2                             //返回名称为key1的set和key2的set的交集  
+   f. sunion key1 key2                             //返回名称为key1的set和key2的set的并集  
+   g. srandomember key number                      //返回名称为key的set中随机Number个元素  
+   h. sismember key value                          //返回名称为key的set中, value是不是其成员元素   1存在，0不存在  
+   i. srem key value1, value2 .. valuen            //移除名称为key的set中, value1, value2, ... valuen  
+   j. spop key                                     //移除名称为key的set中的一个随机value，并返回改value  
+9. redis-card(有序，并且允许出现重复值， 数据以键值对方式存放)  
+   a. zadd key value1 key1 value2 key2 ... valuen keyn//批量添加名称为key的card中的key value  
+   b. zcard key                                    //返回名称为key的card中的元素数量  
+   c. zscore key key1                              //返回名称为key的card中的键值为key1的元素  
+   d. zcount key rang0 rang1                       //返回名称为key的card中的值的区间在rang0到rang1的元素  
+   d. zrank key key1                               //返回名称为key的card中的key值对应的位置索引值 以0起始  
+   e. zincrby key number key1                      //把名称为key的card中的key1值对应的value值+number  
+   f. zrange key index0 index1                     //返回名称为key的card中，index0-index1区间中元素的key  
+   f. zrange key index0 index1 withscores          //返回名称为key的card中，index0-index1区间中元素的key和value  
+
+10. redis分布式配置  
+    1. 建立两个redis服务  
+    2. 运行redis_1服务，使用默认配置  
+    3. 修改redis_2服务配置， 修改端口为6380  
+       a. linux  
+       vim redis.conf  
+       b. window  
+       edit redis.window.conf  
+    4. 运行redis_2服务   
+       redis-server redis.window.conf  
+    5. 运行redis_1客户端  
+       redis-cli -p 6379  
+    6. 运行redis_2客户端  
+       redis-cli -p 6380  
+
+###安装依赖
+```xml
+        <!-- spring boot redis 缓存 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- lecttuce 缓存连接池 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+```
+###项目中配置redis
+```yaml
+在spring节点下配置
+spring:
+  redis:
+    host: 192.168.0.101
+    port: 6379
+    database: 0
+    password: 123456
+    lettuce:
+      pool:
+        max-active: 20 #最大连接数，负值表示无限制 默认=8
+        max-wait: -1 #最大阻塞等待时间，负值表示无限制 默认=-1
+        max-idle: 8 #最大空闲连接数，默认=8
+        min-idle: 0 #最小空闲连接数，默认=8
+```
+###springboot中使用redis
+####编程方式使用
+>参考com.windvalley.guli.service.cms.controller.api中的set/get/delete   
+>一定要修改redis的默认序列化方式，具体参考service_base/redisconfig.java
+####注解方式使用
+>首先配置Cache，包括过期时间、数据序列化
+```java
+    //Cache配置文件
+    @Bean
+    public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory){
+        RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
+                //过期时间600秒
+                .entryTtl(Duration.ofSeconds(600))
+                //配置序列化
+                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
+                //如果数据是NULL，不存入缓存
+                .disableCachingNullValues();
+
+        RedisCacheManager redisCacheManager = RedisCacheManager.builder(redisConnectionFactory)
+                .cacheDefaults(redisCacheConfiguration)
+                .build();
+
+        return redisCacheManager;
+    }
+```
+>在service_base/redisconfig.java的配置类中，添加@EnableCaching注解
+>在业务服务中，添加
+> value 和 key 可以参看下图
+> ![](resource\redisKeyIndex.png) 
+> index类似于group,下面可以存储许多诸如 index:a/index:b/index:c都归结于index这个group  
+> 参考ADService.java里面的listByAdTypeId业务方法实现了一下效果  
+> @Cacheable(value = "index", key = "'listByAdTypeId'") 的意思就是如果Redis缓存中的index组下面含有一个key等于listByAdTypeId的数据，就直接取出来
+> 如果没有就去数据库里面把数据取出来，同时放到index组下面，key值叫listByAdTypeId
+> 切记!!key的值，必须保证在系统里为一个唯一值，要不会在redis里面被覆盖
+ 
 ###阿里云服务
 
 ####VOD 阿里云视频服务

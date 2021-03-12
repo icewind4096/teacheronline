@@ -35,4 +35,6 @@ public interface CourseMapper extends BaseMapper<Course> {
     List<CourseVO> selectListByTeacherId(String teacherId);
 
     WebCourseVO selectWebCourseVOById(String courseId);
+
+    List<CourseVO> selectHotCourseList(@Param(Constants.WRAPPER) QueryWrapper<CourseVO> queryWrapper);
 }

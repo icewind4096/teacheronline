@@ -37,4 +37,6 @@ public interface ICourseService extends IService<Course> {
     List<Course> webSelectList(WebCourseQueryVO webCourseQueryVO);
 
     WebCourseVO selectWebCourseVOById(String courseId);
+
+    List<CourseVO> selectHotCouse();
 }

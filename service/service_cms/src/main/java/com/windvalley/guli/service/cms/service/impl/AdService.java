@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -89,8 +90,16 @@ public class AdService extends ServiceImpl<AdMapper, Ad> implements IAdService {
         return false;
     }
 
+    /**
+     * @Cacheable(value = "index", key = "'listByAdTypeId'") 的意思就是，如果Redis缓存中的index组下面含有一个key等于listByAdTypeId的数据，就直接取出来
+     * 如果没有就去数据库里面把数据取出来，同时放到index组下面，key值叫listByAdTypeId
+     * key的值，必须保证在系统里为一个唯一值，要不会在redis里面被覆盖
+     * @param adTypeId
+     * @return
+     */
+    @Cacheable(value = "index", key = "'listByAdTypeId'")
     @Override
-    public List<Ad> listByAdTypeId(String adTypeId) {
+    public List<Ad> selectByAdTypeId(String adTypeId) {
         QueryWrapper<Ad> queryWrapper = new QueryWrapper();
 
         queryWrapper.orderByAsc("a.type_id", "a.sort");

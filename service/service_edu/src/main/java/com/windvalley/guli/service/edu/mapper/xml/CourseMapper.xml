@@ -54,4 +54,10 @@
         from <include refid="tables"></include>
         where a.id = #{courseId}
     </select>
+
+    <select id="selectHotCourseList" resultType="com.windvalley.guli.service.edu.entity.vo.CourseVO">
+        select <include refid="columns"></include>
+        from <include refid="tables"></include>
+        ${ew.customSqlSegment}
+    </select>
 </mapper>

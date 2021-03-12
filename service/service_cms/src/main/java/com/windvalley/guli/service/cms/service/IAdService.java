@@ -30,5 +30,5 @@ public interface IAdService extends IService<Ad> {
 
     boolean removeImageById(String id);
 
-    List<Ad> listByAdTypeId(String adTypeId);
+    List<Ad> selectByAdTypeId(String adTypeId);
 }
