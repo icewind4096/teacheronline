@@ -24,6 +24,17 @@ spring:
       transport:
         port: 8081 #与控制台交流的端口， 任意一个未使用的端口都可以
         dashboard: localhost:8080 # 制定控制台服务地址
+  redis:
+    host: 192.168.57.128
+    port: 6379
+    database: 0
+    password:
+    lettuce:
+      pool:
+        max-active: 20 #最大连接数，负值表示无限制 默认=8
+        max-wait: -1 #最大阻塞等待时间，负值表示无限制 默认=-1
+        max-idle: 8 #最大空闲连接数，默认=8
+        min-idle: 0 #最小空闲连接数，默认=8
 #service-oss:
 #    ribbon:
 #      NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule

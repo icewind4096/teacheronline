@@ -388,7 +388,7 @@ default-character-set=utf8
 
 ##mybatis
 ###使用代码生成器产生框架代码
->具体参考test目录下得CodeGenerator.java
+>具体参考对应模块\src\test目录下得CodeGenerator.java
 
 ##redis
 ###安装
@@ -871,6 +871,11 @@ spring:
         </dependency>
     </dependencies>
     ```
+####阿里云短信服务
+#####配置
+###### 签名配置  
+###### 模板配置
+    
 ###事务处理
 + 必须在mybatis配置类中，允许事务
 ```java
