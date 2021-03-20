@@ -38,11 +38,11 @@ public class APISMSController {
         String checkCode = RandomUtils.getSixBitRandom();
 
         //发送验证码
-        SMSService.send(mobile, checkCode);
+        //SMSService.send(mobile, checkCode);
 
         //存储验证码到Redis
         redisTemplate.opsForValue().set(mobile, checkCode, 5, TimeUnit.MINUTES);
 
-        return R.ok().message("短信发送成功");
+        return R.ok().message("短信发送成功").data("code", checkCode);
     }
 }

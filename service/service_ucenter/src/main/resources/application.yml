@@ -1,0 +1,43 @@
+server:
+  port: 8780
+  tomcat:
+    max-threads: 10   #tomcat最大并发修改为10，默认值为200
+spring:
+  profiles:
+    active: dev   #使用dev的环境配置
+  application:
+    name: service-ucenter
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/guli_ucenter?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false
+    username: root
+    password: root
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848 #nacos服务器地址
+    sentinel:
+      transport:
+        port: 8081 #与控制台交流的端口， 任意一个未使用的端口都可以
+        dashboard: localhost:8080 # 制定控制台服务地址
+  redis:
+    host: 192.168.57.128
+    port: 6379
+    database: 0
+    password:
+    lettuce:
+      pool:
+        max-active: 20 #最大连接数，负值表示无限制 默认=8
+        max-wait: -1 #最大阻塞等待时间，负值表示无限制 默认=-1
+        max-idle: 8 #最大空闲连接数，默认=8
+        min-idle: 0 #最小空闲连接数，默认=8
+#service-oss:
+#    ribbon:
+#      NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:com/windvalley/guli/service/edu/mapper/xml/*.xml
