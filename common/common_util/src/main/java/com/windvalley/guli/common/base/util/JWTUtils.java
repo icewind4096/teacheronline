@@ -2,18 +2,18 @@ package com.windvalley.guli.common.base.util;
 
 import com.windvalley.guli.common.base.entry.JWTInfo;
 import io.jsonwebtoken.*;
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
-import org.springframework.http.HttpRequest;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.spec.SecretKeySpec;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
 import java.util.Date;
 import java.util.UUID;
 
+@Slf4j
 public class JWTUtils {
     private static final int expir = 1800 * 1000;
     private static final String jwtSecret = PropertiesUtil.getProperty("jwt.secret", "");
@@ -60,6 +60,7 @@ public class JWTUtils {
         try {
             Jwts.parser().setSigningKey(getKeyInstance()).parseClaimsJws(token);
         } catch (Exception e) {
+            log.error("获取用户token信息失败:" + e.getMessage());
             return false;
         }
 
@@ -72,14 +73,14 @@ public class JWTUtils {
         return checkJWTToken(token);
     }
 
-    public static JWTInfo getMemberIdByToken(HttpServletRequest httpServletRequest){
+    public static JWTInfo getMemberInfoByToken(HttpServletRequest httpServletRequest){
         String token = httpServletRequest.getHeader("token");
 
         if (checkJWTToken(token) == true){
             Jws<Claims> claimsJws = Jwts.parser().setSigningKey(getKeyInstance()).parseClaimsJws(token);
             Claims claims = claimsJws.getBody();
             JWTInfo jwtInfo = new JWTInfo();
-            jwtInfo.setAvatar(claims.get("avater").toString());
+            jwtInfo.setAvatar(claims.get("avatar").toString());
             jwtInfo.setNickName(claims.get("nickName").toString());
             jwtInfo.setId(claims.get("id").toString());
             return jwtInfo;

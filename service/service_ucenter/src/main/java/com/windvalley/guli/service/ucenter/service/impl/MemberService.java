@@ -1,13 +1,16 @@
 package com.windvalley.guli.service.ucenter.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.windvalley.guli.common.base.entry.JWTInfo;
 import com.windvalley.guli.common.base.result.R;
 import com.windvalley.guli.common.base.result.ResultCodeEnum;
 import com.windvalley.guli.common.base.util.FormUtils;
+import com.windvalley.guli.common.base.util.JWTUtils;
 import com.windvalley.guli.common.base.util.MD5;
 import com.windvalley.guli.common.base.util.PropertiesUtil;
 import com.windvalley.guli.service.base.exception.WindvalleyException;
 import com.windvalley.guli.service.ucenter.entity.Member;
+import com.windvalley.guli.service.ucenter.entity.vo.LoginVO;
 import com.windvalley.guli.service.ucenter.entity.vo.RegisterVO;
 import com.windvalley.guli.service.ucenter.mapper.MemberMapper;
 import com.windvalley.guli.service.ucenter.service.IMemberService;
@@ -76,5 +79,44 @@ public class MemberService extends ServiceImpl<MemberMapper, Member> implements 
         queryWrapper.eq("mobile", mobile);
 
         return baseMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public String login(LoginVO loginVO) {
+        //校验
+        if (loginVO.getMobile().isEmpty() || !isMobile(loginVO.getMobile())){
+            throw new WindvalleyException(ResultCodeEnum.LOGIN_PHONE_ERROR);
+        }
+
+        if (loginVO.getPassword().isEmpty()){
+            throw new WindvalleyException(ResultCodeEnum.PARAM_ERROR);
+        }
+
+        Member member = findMemberByMobile(loginVO.getMobile());
+        if (member == null){
+            throw new WindvalleyException(ResultCodeEnum.LOGIN_MOBILE_ERROR);
+        } else {
+            if (!member.getPassword().equals(MD5.encrypt(loginVO.getPassword()))) {
+                throw new WindvalleyException(ResultCodeEnum.LOGIN_PASSWORD_ERROR);
+            }
+
+            if (member.getDisabled()){
+                throw new WindvalleyException(ResultCodeEnum.LOGIN_DISABLED_ERROR);
+            }
+        }
+
+        //产生登录token
+        return generatorToken(member.getId(), member.getNickname(), member.getAvatar());
+
+    }
+
+    private String generatorToken(String id, String nickname, String avatar) {
+        JWTInfo jwtInfo = new JWTInfo();
+
+        jwtInfo.setId(id);
+        jwtInfo.setNickName(nickname);
+        jwtInfo.setAvatar(avatar);
+
+        return JWTUtils.generatorJWT(jwtInfo);
     }
 }

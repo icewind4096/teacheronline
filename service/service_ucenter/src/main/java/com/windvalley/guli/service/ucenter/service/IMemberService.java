@@ -2,6 +2,7 @@ package com.windvalley.guli.service.ucenter.service;
 
 import com.windvalley.guli.service.ucenter.entity.Member;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.windvalley.guli.service.ucenter.entity.vo.LoginVO;
 import com.windvalley.guli.service.ucenter.entity.vo.RegisterVO;
 
 /**
@@ -15,4 +16,6 @@ import com.windvalley.guli.service.ucenter.entity.vo.RegisterVO;
 public interface IMemberService extends IService<Member> {
 
     void register(RegisterVO registerVO);
+
+    String login(LoginVO loginVO);
 }
