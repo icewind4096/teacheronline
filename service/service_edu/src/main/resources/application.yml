@@ -25,7 +25,7 @@ spring:
         port: 8081 #与控制台交流的端口， 任意一个未使用的端口都可以
         dashboard: localhost:8080 # 制定控制台服务地址
   redis:
-    host: 192.168.57.128
+    host: 192.168.18.128
     port: 6379
     database: 0
     password:
