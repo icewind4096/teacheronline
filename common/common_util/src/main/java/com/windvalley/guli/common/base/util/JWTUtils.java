@@ -15,7 +15,6 @@ import java.util.UUID;
 
 @Slf4j
 public class JWTUtils {
-    private static final int expir = 1800 * 1000;
     private static final String jwtSecret = PropertiesUtil.getProperty("jwt.secret", "");
 
     private static Key getKeyInstance() {
@@ -24,7 +23,7 @@ public class JWTUtils {
         return new SecretKeySpec(bytes, signatureAlgorithm.getJcaName());
     }
 
-    public static String generatorJWT(JWTInfo jwtInfo) {
+    public static String generatorJWT(JWTInfo jwtInfo, int expir) {
         JwtBuilder jwtBuilder = Jwts.builder();
 
         //jwt头部分

@@ -117,6 +117,14 @@ public class MemberService extends ServiceImpl<MemberMapper, Member> implements 
         jwtInfo.setNickName(nickname);
         jwtInfo.setAvatar(avatar);
 
-        return JWTUtils.generatorJWT(jwtInfo);
+        return JWTUtils.generatorJWT(jwtInfo, 1800);
+    }
+
+    @Override
+    public Member getByOpenId(String openId) {
+        QueryWrapper<Member> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("openId", openId);
+
+        return baseMapper.selectOne(queryWrapper);
     }
 }

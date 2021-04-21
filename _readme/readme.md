@@ -605,7 +605,19 @@ spring:
 > @Cacheable(value = "index", key = "'listByAdTypeId'") 的意思就是如果Redis缓存中的index组下面含有一个key等于listByAdTypeId的数据，就直接取出来
 > 如果没有就去数据库里面把数据取出来，同时放到index组下面，key值叫listByAdTypeId
 > 切记!!key的值，必须保证在系统里为一个唯一值，要不会在redis里面被覆盖
- 
+
+###springboot中使用session redis
+####引入依赖
+```html
+        <!-- spring session session同步到 redis -->
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-data-redis</artifactId>
+        </dependency>
+```
+####配置
+参考common/service_base/src/main/java/com.windvalley.guli.service.base/config/HtteSessionConfig
+
 ###阿里云服务
 
 ####VOD 阿里云视频服务
@@ -905,4 +917,71 @@ public class MybatisPlusConfig {
 
         return course.getId();
     }
+```
+
+####微信三方授权登录
+#####微信三方授权的步骤   
+                    客户                                             第三方网站                                    微信授权服务器
+1.            用户访问第三方网址                 -----------> 
+2.                                            <-----------    第三方网站提供微信授权链接               
+3.            用户点击第三方网址提供微信授权链接    ----------->     
+4.                                                            第三方网站发送请求到微信授权服务器 -------->       接收到第三方网站请求微信授权的请求,产生二维码
+5.            用户手机扫码二位码允许第三方网站的授权 -----------------------------------------------------> 
+6.                                                                                                         微信调用步骤4第三方网站提供的回调接口,返回一个临时code
+7.                                                            第三方网站提供临时code，appid，appsecurity ----> 微信进行校验,返回token             
+
+#####代码
+1. 步骤3产生URL网址的二维码，以便用户授权,核心代码参看APIWChatController.login
+```java
+    核心代码就是产生一个URL,使用APPID, 微信回调客户服务器的URL地址，以及状态
+    @GetMapping("login")
+    public String generatorQRConnect(HttpSession httpSession){
+        String appid = uCenterProperties.getAppid();
+        String redirectURI = encodeString(uCenterProperties.getRedirectURI());
+        String state = UUID.randomUUID().toString();
+
+        //url地址要使用URLEncoder进行编码，就是BASE53的一个变形
+        String qrCodeURL = getQRCodeURL(appid, redirectURI, state);
+
+        //stat存储在session中，以便微信回调时检查是不是自己发出让微信回调的，
+        httpSession.setAttribute("wx_open_state", state);
+
+        return "redirect:" + qrCodeURL;
+    }
+
+    private String getQRCodeURL(String appid, String redirectURI, String state) {
+        return String.format("https://open.weixin.qq.com/connect/qrconnect?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_login&state=%s#wechat_redirect",
+                                appid,
+                                redirectURI,
+                                state);
+    }
+
+    private String encodeString(String value) {
+        try {
+            return URLEncoder.encode(uCenterProperties.getRedirectURI(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            log.error(ExceptionUtils.getMessage(e));
+            throw new WindvalleyException(ResultCodeEnum.URL_ENCODE_ERROR);
+        }
+    }
+```
+2.
+
+####网页开发必须知道的几个网址
+##### 1. 阿里图标库 https://www.iconfont.cn/
+
+####微信小程序
+#####小程序配置  
+>https://developers.weixin.qq.com/miniprogram/dev/framework/config.html#%E5%85%A8%E5%B1%80%E9%85%8D%E7%BD%AE
+
+app.json
+定义了全局的窗口标题样式，如果需要在特定页面上修改窗口标题样式，在对应页面的 页面.json 文件中修改
+```json
+{
+  "window": {
+    "navigationBarTextStyle": "white",        // 窗口标题字体颜色 
+    "navigationBarBackgroundColor": "#d43c33", // 窗口标题背景色 
+    "navigationBarTitleText": "花吧花艺设计室" // 窗口标题 
+  }
+}
 ```

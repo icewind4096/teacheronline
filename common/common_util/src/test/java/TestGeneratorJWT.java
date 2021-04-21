@@ -13,9 +13,9 @@ public class TestGeneratorJWT {
         jwtInfo.setNickName("nickName");
         jwtInfo.setAvatar("avatar");
 
-        System.out.println(JWTUtils.generatorJWT(jwtInfo));
+        System.out.println(JWTUtils.generatorJWT(jwtInfo, 1800));
 
-        System.out.println(JWTUtils.checkJWTToken(JWTUtils.generatorJWT(jwtInfo)));
+        System.out.println(JWTUtils.checkJWTToken(JWTUtils.generatorJWT(jwtInfo, 1800)));
 
         char a = 01;
         String sourceData = a + "A这B";
